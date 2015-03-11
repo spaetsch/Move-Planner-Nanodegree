@@ -31,7 +31,6 @@ function loadData() {
 
         for (var i=0; i < articles.length; i++){
             var article = articles[i];
-            //console.log(article.web_url);
             $nytElem.append('<li class = "article">' +
                 '<a href="'+article.web_url+'">'+article.headline.main+'</a>'+
                 '<p>' + article.snippet + '</p>');
@@ -41,24 +40,27 @@ function loadData() {
             $nytHeaderElem.text("New York Times articles could not be loaded");
     });
 
-    var wikiURL = "http://en.wikipedia.org/w/api.php?action=opensearch&search=" + cityStr + 
+    //wikipedia AJAX request
+    var wikiURL = "http://en.wikiMOOMOOMOOMOOpedia.org/w/api.php?action=opensearch&search=" + cityStr + 
         "&format=json&callback=wikiCallback";
 
-    console.log("wikiURL: ", wikiURL);
-  
+    //for error handling
+    var wikiRequestTimeout = setTimeout(function(){
+        $wikiElem.text("Failed to get Wikipedia resources.");
+    }, 8000);
+
     $.ajax({
         url: wikiURL,
         dataType: "jsonp",
         //jsonp: "callback", //redundant here
         success: function(response){
             var articleList = response[1];
-            console.log("here 1");
             for (var i =0; i < articleList.length; i++){
                 articleStr = articleList[i];
-                console.log("wiki ", articleStr);
                 var URL = "http://en.wikipedia.org/wiki/" + articleStr;
                 $wikiElem.append('<li><a href="' +URL+ '">' + articleStr + '</a></li>');
             };
+            clearTimeout(wikiRequestTimeout);
         }
 
 
